@@ -105,6 +105,7 @@ public class Server extends Thread{
                 long passedlen = 0;
                 long len = 0;
                 int whichOne = inputStream.readInt();
+                System.out.println("Upload/Download(0/1) : "+whichOne);
                 if(whichOne == 0)
                 {
                     String fileName = inputStream.readUTF();
@@ -137,7 +138,52 @@ public class Server extends Thread{
                 }
                 else
                 {
+                    int fileIndex = inputStream.readInt();
+                    String fileName = null;
+                    for(Pair<String,Integer> element : this.fileList)
+                    {
+//                        System.out.println(element.getKey()+ " " +element.getValue());
+                        if(element.getValue() == fileIndex)
+                        {
+                            fileName = element.getKey();
+                            break;
+                        }
+                    }
+                    System.out.println("Staring upload to client.File name : "+fileName);
+                    File fi = new File(fileDir+fileName);
+                    DataOutputStream ps = new DataOutputStream(socket.getOutputStream());
+                    if(fileName == null)
+                    {
+                        ps.writeInt(0);
+                        ps.flush();
+                    }
+                    else
+                    {
+                        DataInputStream fileInputStream = new DataInputStream(new FileInputStream(fileDir+fileName));
+                        ps.writeInt(1);
+                        ps.flush();
+                        ps.writeUTF(fi.getName());
+                        ps.flush();
+                        ps.writeLong((long)fi.length());
+                        ps.flush();
 
+                        while(true){
+                            int read = 0;
+                            if(fileInputStream != null)
+                            {
+                                read = fileInputStream.read(buf);
+                            }
+                            if(read == -1)
+                            {
+                                break;
+                            }
+                            ps.write(buf,0,read);
+                        }
+                        ps.flush();
+                        fileInputStream.close();
+                        ps.close();
+                        System.out.println("Successfully Transferred!");
+                    }
                 }
 
             }while(!stop);
