@@ -5,6 +5,8 @@ import javafx.util.Pair;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+
 
 public class Client {
     private String filePath;
@@ -12,6 +14,10 @@ public class Client {
     private int hostPort;
     private int downPort;
     private String downFileDir;
+    private ArrayList<FileDetails> fileList= new ArrayList<FileDetails>();
+//    private String newFileName;
+
+
     public String getFilePath(){
         return filePath;
     }
@@ -38,20 +44,31 @@ public class Client {
         this.downFileDir = fileDir;
     }
 
+//    public String getNewFileName(){
+//        return newFileName;
+//    }
+
     public static void main(String[] args){
         //For file uploading
         Client fileUp = new Client();
         fileUp.setHostIp("127.0.0.1");
         fileUp.setHostPort(9908);
-//        fileUp.setFilePath("../../../Books/Novel/");
-//        fileUp.uploadFile("124612849_2825290834413757_6618010417400904494_o.jpg");
+        fileUp.setFilePath("../../../Books/Novel/");
+        fileUp.uploadFile("ANYODIN (www.amarbooks.org).pdf");
 
         //For file downloading
 //        Client fileDown = new Client();
-        File file = new File("D:\\IdeaProject\\Test\\src\\ClientFlies");
-        file.mkdir();
-        fileUp.setFileDir("D:\\IdeaProject\\Test\\src\\ClientFlies\\");
-        fileUp.downloadFile(2);
+//        File file = new File("D:\\IdeaProject\\Test\\src\\ClientFlies");
+//        file.mkdir();
+//        fileUp.setFileDir("D:\\IdeaProject\\Test\\src\\ClientFlies\\");
+//        fileUp.downloadFile(1);
+
+        //For file deletion
+//        fileUp.deleteFile(1);
+
+        //For file rename
+//        fileUp.newFileName="second.exe";
+//        fileUp.fileRename(1,"third");
     }
     public void uploadFile(String fileName){
         Socket sc = null;
@@ -61,6 +78,17 @@ public class Client {
             System.out.println("File length: "+(int)fi.length());
             DataInputStream fileInputStream = new DataInputStream(new FileInputStream(filePath+fileName));
             DataOutputStream ps = new DataOutputStream(sc.getOutputStream());
+
+            //Getting file details from server
+            InputStream inputStreamObj = sc.getInputStream();
+            ObjectInputStream objInputStream = new ObjectInputStream((inputStreamObj));
+            fileList = (ArrayList<FileDetails>)objInputStream.readObject();
+
+
+            for(FileDetails each:fileList)
+            {
+                System.out.println(each.getFileName()+" "+ each.getId()+" "+ each.getFileSize());
+            }
 
             ps.writeInt(0);
             ps.flush();
@@ -85,6 +113,7 @@ public class Client {
                 ps.write(buf,0,read);
             }
             ps.flush();
+            objInputStream.close();
             fileInputStream.close();
             ps.close();
             sc.close();
@@ -207,5 +236,97 @@ public class Client {
             System.out.println("An Error has occurred in file retrieval(client)!");
             e.printStackTrace();
         }
+    }
+
+    public void deleteFile(int index){
+        Socket socket = null;
+        try{
+            socket = new Socket(hostIp,hostPort);
+            System.out.println("Successfully connected in the server for delete operation");
+
+
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+
+            //Sending a integer to determine delete operation[In server]
+            outputStream.writeInt(2);
+            outputStream.flush();
+
+            //Sending file index
+            outputStream.writeInt(index);
+            outputStream.flush();
+
+            //Receiving feedback
+            DataInputStream inputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+            int isFound = inputStream.readInt();
+            if(isFound == 0)
+            {
+                System.out.println("Couldn't find the file to delete");
+            }
+            else
+            {
+                String fileName = inputStream.readUTF();
+                System.out.println(fileName + " has been deleted successfully");
+            }
+            outputStream.close();
+            inputStream.close();
+            socket.close();
+        }catch(Exception e)
+        {
+            System.out.println("Getting Exception from client-side delete operation");
+            e.printStackTrace();
+        }
+    }
+
+    public void fileRename(int index,String fileName){
+        String newFileName = fileName;
+//        String fileExtension = getFileExtension(fileName);
+        if(newFileName == null)
+        {
+            System.out.println("File name could not be empty");
+            return;
+        }
+        System.out.println("New file name: " + newFileName);
+        Socket socket = null;
+        try{
+            socket = new Socket(hostIp,hostPort);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            DataInputStream inputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+            //Sending rename operation request
+            outputStream.writeInt(3);
+            outputStream.flush();
+
+            //Sending file index
+            outputStream.writeInt(index);
+            outputStream.flush();
+            outputStream.writeUTF(newFileName);
+            outputStream.flush();
+
+            int isFound = inputStream.readInt();
+            if(isFound == 0)
+            {
+                System.out.println("Could not find the file to rename");
+            }
+            else
+            {
+
+                int isSuccess = inputStream.readInt();
+                if(isSuccess == 0)
+                {
+                    System.out.println("Could not find the file to rename");
+                }
+                else
+                {
+                    System.out.println("Changed the previous file name :" + " to " +newFileName);
+                }
+            }
+            outputStream.close();
+            inputStream.close();
+
+        }catch (Exception e)
+        {
+            System.out.println("Exception from file rename module");
+            e.printStackTrace();
+        }
+
     }
 }

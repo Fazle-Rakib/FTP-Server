@@ -7,17 +7,18 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Server extends Thread{
+public class Server extends Thread {
     private String fileDir;
     private int serverPort;
     private boolean stop;
     private int nextFileId;
-    private ArrayList <Pair <String, Integer>> fileList = new ArrayList<Pair<String,Integer>>();
+    private ArrayList <FileDetails> fileList = new ArrayList<FileDetails>();
 
-    public ArrayList <Pair <String, Integer>> getFileList(){
+    public ArrayList <FileDetails> getFileList(){
         return fileList;
     }
-    public void updateArrayList(Pair<String,Integer> newFile){
+
+    public void updateArrayList(FileDetails newFile){
         this.fileList.add(newFile);
     }
     public boolean deleteArrayListItem(int id){
@@ -25,7 +26,7 @@ public class Server extends Thread{
         int total = this.fileList.size();
         for(int i = 0; i<total; i++)
         {
-            if(id == this.fileList.get(i).getValue()){
+            if(id == this.fileList.get(i).getId()){
                 index = i;
                 break;
             }
@@ -40,6 +41,15 @@ public class Server extends Thread{
     public String getFileDir() {
         return fileDir;
     }
+
+    private String getFileExtension(String name) {
+        int lastIndexOf = name.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return ""; // empty extension
+        }
+        return name.substring(lastIndexOf);
+    }
+
 
     public void setFileDir(String fileDir) {
         this.fileDir = fileDir;
@@ -79,7 +89,7 @@ public class Server extends Thread{
         {
             if(eachFile.isFile())
             {
-                serverObj.fileList.add(new Pair<String,Integer>(eachFile.getName(),serverObj.nextFileId++));
+                serverObj.fileList.add(new FileDetails(eachFile.getName(),serverObj.nextFileId++,eachFile.length(),""));
             }
         }
 
@@ -97,6 +107,13 @@ public class Server extends Thread{
             System.out.println("You can create a socket link now. Server is listing...");
             do{
                 socket = ss.accept();
+                System.out.println("Client Address:port =>" + socket.getInetAddress() + ":" + socket.getPort());
+
+
+                //Sending all files details to client
+                ObjectOutputStream objOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                objOutputStream.writeObject(fileList);
+//                objOutputStream.close();
 
                 DataInputStream inputStream = new DataInputStream(
                         new BufferedInputStream(socket.getInputStream()));
@@ -106,7 +123,7 @@ public class Server extends Thread{
                 long len = 0;
                 int whichOne = inputStream.readInt();
                 System.out.println("Upload/Download(0/1) : "+whichOne);
-                if(whichOne == 0)
+                if(whichOne == 0)  //File Upload
                 {
                     String fileName = inputStream.readUTF();
                     String filePath = fileDir+fileName;
@@ -130,22 +147,22 @@ public class Server extends Thread{
                     }
                     System.out.println("Receiving completed");
                     fileOut.close();
-                    this.updateArrayList(new Pair<>(fileName,nextFileId++));
-                    for(Pair<String,Integer> element : this.fileList)
+                    this.updateArrayList(new FileDetails(fileName,nextFileId++,len,""));
+                    for(FileDetails element : this.fileList)
                     {
-                        System.out.println(element.getKey()+ " " +element.getValue());
+                        System.out.println(element.getFileName()+ " " +element.getId() + " " + element.getFileSize());
                     }
                 }
-                else
+                else if(whichOne == 1) // File Download
                 {
                     int fileIndex = inputStream.readInt();
                     String fileName = null;
-                    for(Pair<String,Integer> element : this.fileList)
+                    for(FileDetails element : this.fileList)
                     {
 //                        System.out.println(element.getKey()+ " " +element.getValue());
-                        if(element.getValue() == fileIndex)
+                        if(element.getId() == fileIndex)
                         {
-                            fileName = element.getKey();
+                            fileName = element.getFileName();
                             break;
                         }
                     }
@@ -183,6 +200,104 @@ public class Server extends Thread{
                         fileInputStream.close();
                         ps.close();
                         System.out.println("Successfully Transferred!");
+                    }
+                }
+                else if(whichOne == 2) // File Delete
+                {
+                    int fileIndex = inputStream.readInt();
+                    String fileName = null;
+                    for(FileDetails eachFile:fileList)
+                    {
+                        if(eachFile.getId() == fileIndex)
+                        {
+                            fileName = eachFile.getFileName();
+                            break;
+                        }
+                    }
+                    DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                    if(fileName == null)
+                    {
+                        outputStream.writeInt(0);
+                        outputStream.flush();
+                        System.out.println("Couldn't  delete as the file was not found...");
+                    }
+                    else
+                    {
+                        File file = new File(fileDir+fileName);
+                        if(file.delete())
+                        {
+                            deleteArrayListItem(fileIndex);
+                            outputStream.writeInt(1);
+                            outputStream.flush();
+                            outputStream.writeUTF(fileName);
+                            outputStream.flush();
+                            System.out.println("Successfully deleted :"+fileName);
+                        }
+                        else
+                        {
+                            outputStream.writeInt(0);
+                            outputStream.flush();
+                            System.out.println("Couldn't delete for other reason...");
+                        }
+
+                    }
+                    outputStream.close();
+                }
+                else //File Rename
+                {
+                    //Getting the file index
+                    int fileIndex = inputStream.readInt();
+                    System.out.println("file Index : "+fileIndex);
+                    String fileName = null;
+                    int indexInList = -1;
+                    for(FileDetails eachFile:fileList)
+                    {
+                        if(eachFile.getId() == fileIndex)
+                        {
+                            fileName = eachFile.getFileName();
+                            indexInList++;
+                            break;
+                        }
+                    }
+                    System.out.println("File Name: " + fileName);
+                    DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                    String newFileName = inputStream.readUTF();
+                    if(fileName == null)
+                    {
+                        //If the file is not found
+                        outputStream.writeInt(0);
+                        outputStream.flush();
+                        System.out.println("Couldn't  Rename as the file was not found...");
+                    }
+                    else
+                    {
+                        //If the file is found
+                        outputStream.writeInt(1);
+                        outputStream.flush();
+
+
+                        String fileExtension = getFileExtension(fileName);
+                        newFileName+=fileExtension;
+                        System.out.println("New file Name: "+newFileName);
+                        File file = new File(fileDir+fileName);
+                        File newFile = new File(fileDir+newFileName);
+                        boolean isSuccess = file.renameTo(newFile);
+
+                        //Updating the list
+                        fileList.remove(indexInList);
+                        updateArrayList(new FileDetails(newFileName,fileIndex,file.length(),""));
+                        //Does file name changed or not
+                        if(!isSuccess)
+                        {
+                            outputStream.writeInt(0);
+                        }
+                        else
+                        {
+                            outputStream.writeInt(1);
+                        }
+                        outputStream.flush();
+                        System.out.println("Previous file name: "+fileName + " to " + newFileName);
+                        outputStream.close();
                     }
                 }
 
