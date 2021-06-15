@@ -1,6 +1,8 @@
 package server;
 
 import File.FileDetails;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -15,10 +17,20 @@ public class Server extends Thread {
     private ServerSocket serverSocket;
     Socket socket = null;
 
-    private ArrayList <FileDetails> fileList = new ArrayList<FileDetails>();
+    private static ArrayList <FileDetails> fileList = new ArrayList<FileDetails>();
 
     public ArrayList <FileDetails> getFileList(){
         return fileList;
+    }
+
+    public static ObservableList<FileDetails> getObservableFileList() {
+        ObservableList<FileDetails> observableFileList = FXCollections.observableArrayList();
+        for (FileDetails each : fileList) {
+            System.out.println("Ok3");
+            observableFileList.add(each);
+            System.out.println(each.getFileName() + " " + each.getId() + " " + each.getFileSize());
+        }
+        return observableFileList;
     }
 
     public void updateArrayList(FileDetails newFile){
@@ -44,6 +56,7 @@ public class Server extends Thread {
     public String getFileDir() {
         return fileDir;
     }
+
 
     private String getFileExtension(String name) {
         int lastIndexOf = name.lastIndexOf(".");
@@ -74,14 +87,6 @@ public class Server extends Thread {
         this.stop = stop;
     }
 
-    public static void main(String[] args){
-
-
-        //Server Object
-        Server serverObj = new Server();
-
-
-    }
     public Server(){
         System.out.println("here!");
 

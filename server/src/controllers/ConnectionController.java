@@ -27,15 +27,9 @@ public class ConnectionController implements Initializable {
     @FXML
     private Button connectionButton;
     @FXML
-    private Label connectionMessage;
-    @FXML
     private ImageView brandingImageView;
     @FXML
     private ImageView connectionImageView;
-    @FXML
-    private TextField ipAddressTextField;
-    @FXML
-    private TextField portTextField;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -52,57 +46,44 @@ public class ConnectionController implements Initializable {
     public void connectionButtonAction(ActionEvent event) throws IOException, InterruptedException {
 //        Stage stage = (Stage) connectionButton.getScene().getWindow();
 //        stage.close();
-        String ipAddress = ipAddressTextField.getText();
-        String port = portTextField.getText();
-
-        if (ipAddress.isBlank() || port.isBlank()) {
-            connectionMessage.setText("Please Fill the fields");
-            return;
-        }
 
         try {
-//            Server server = new Server(ipAddress, Integer.parseInt(port));
+            Server server = new Server();
 //            setupConnection(event);
-            connectionMessage.setText("Connection Set Up Successful!");
 
 
-//            Parent clientView = FXMLLoader.load(getClass().getResource("../views/client.fxml"));
+//            Parent serverView = FXMLLoader.load(getClass().getResource("../views/client.fxml"));
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("../views/client.fxml"));
-            Parent clientView = loader.load();
+            loader.setLocation(getClass().getResource("../views/server.fxml"));
+            Parent serverView = loader.load();
 
-            Scene clientViewScene = new Scene(clientView);
+            Scene serverViewScene = new Scene(serverView);
 
             // Access the controller
             ServerController serverController = loader.getController();
-//            ArrayList<FileDetails> fileList = new ArrayList<FileDetails>();
-//            ArrayList<FileDetails> fileList = client.fetchFileListFromServer();
-//            client.getFileList();
-//            serverController.initData(server);
+            serverController.initData(server);
 
-            Stage clientViewStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//            clientViewStage.setUserData(client);
-            clientViewStage.setScene(clientViewScene);
-            clientViewStage.show();
+            Stage serverViewStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//            serverViewStage.setUserData(client);
+            serverViewStage.setScene(serverViewScene);
+            serverViewStage.show();
         } catch (Exception exception) {
             exception.printStackTrace();
-            connectionMessage.setText("Choose a valid Ip Address and Port");
         }
 
 //        setupConnection(event);
     }
 
-    private void setupConnection(ActionEvent event) throws IOException, InterruptedException {
-        connectionMessage.setText("Connection Set Up Successful!");
-        loadClientFxml(event);
-    }
-
-    private void loadClientFxml(ActionEvent event) throws IOException {
-
-        Parent clientView = FXMLLoader.load(getClass().getResource("../views/client.fxml"));
-        Scene clientViewScene = new Scene(clientView);
-        Stage clientViewStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        clientViewStage.setScene(clientViewScene);
-        clientViewStage.show();
-    }
+//    private void setupConnection(ActionEvent event) throws IOException, InterruptedException {
+//        loadClientFxml(event);
+//    }
+//
+//    private void loadClientFxml(ActionEvent event) throws IOException {
+//
+//        Parent clientView = FXMLLoader.load(getClass().getResource("../views/client.fxml"));
+//        Scene clientViewScene = new Scene(clientView);
+//        Stage clientViewStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//        clientViewStage.setScene(clientViewScene);
+//        clientViewStage.show();
+//    }
 }
