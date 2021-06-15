@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class ClientController implements Initializable {
+    public Button refreshListButton;
     @FXML
     private Button chooseFileButton;
 
@@ -123,5 +124,10 @@ public class ClientController implements Initializable {
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }
+    }
+
+    public void refreshListButtonAction(ActionEvent event) {
+        this.observableFileList = client.getObservableFileList();
+        fileTableView.setItems(this.observableFileList);
     }
 }

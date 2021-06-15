@@ -101,9 +101,9 @@ public class Client {
             ObjectInputStream objInputStream = new ObjectInputStream((inputStreamObj));
             fileList = (ArrayList<FileDetails>) objInputStream.readObject();
 
-//            for (FileDetails each : this.fileList) {
-//                System.out.println(each.getFileName() + " " + each.getId() + " " + each.getFileSize());
-//            }
+            for (FileDetails each : this.fileList) {
+                System.out.println(each.getFileName() + " --> " + each.getId() );
+            }
 
 //                    objInputStream.close();
 
@@ -116,6 +116,7 @@ public class Client {
     }
 
     public static ObservableList<FileDetails> getObservableFileList() {
+
         ObservableList<FileDetails> observableFileList = FXCollections.observableArrayList();
         for (FileDetails each : fileList) {
             System.out.println("Ok3");
@@ -182,7 +183,7 @@ public class Client {
 //            ps.close();
 //            sc.close();
             System.out.println("Successfully Transferred!");
-//            fetchFileListFromServer();
+            fetchFileListFromServer();
 
         } catch (Exception e) {
             System.out.println("An Error has occurred!");
@@ -350,6 +351,7 @@ public class Client {
         }
 
     }
+
     public void closingSocket(){
     }
 }

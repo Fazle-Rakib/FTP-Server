@@ -18,7 +18,7 @@
             <Button fx:id="chooseFileButton" layoutX="35.0" layoutY="20.0" mnemonicParsing="false" onAction="#chooseFileButtonAction" text="Choose File" AnchorPane.leftAnchor="23.0" />
             <Button fx:id="uploadFileButton" disable="true" layoutX="25.0" layoutY="101.0" mnemonicParsing="false" onAction="#uploadFileButtonAction" prefHeight="25.0" prefWidth="72.0" text="Upload" AnchorPane.bottomAnchor="14.0" />
             <TextField fx:id="chosenFileDirectoryTextField" layoutX="136.0" layoutY="20.0" prefHeight="25.0" prefWidth="441.0" promptText="Please Choose a File to Upload" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="23.0" />
-            <Button fx:id="uploadFileButton1" disable="true" layoutX="116.0" layoutY="101.0" mnemonicParsing="false" onAction="#uploadFileButtonAction" prefHeight="25.0" prefWidth="72.0" text="Preview" AnchorPane.bottomAnchor="14.0" />
+            <Button fx:id="refreshListButton" layoutX="116.0" layoutY="101.0" mnemonicParsing="false" onAction="#refreshListButtonAction" prefHeight="25.0" prefWidth="72.0" text="Refresh" AnchorPane.bottomAnchor="14.0" />
          </children>
       </AnchorPane>
    </top>
