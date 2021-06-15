@@ -298,6 +298,8 @@ public class Client {
                 System.out.println(fileName + " has been deleted successfully");
 //                fetchFileListFromServer();
             }
+            fetchFileListFromServer();
+
 //            outputStream.close();
 //            inputStream.close();
 //            clientSocket.close();

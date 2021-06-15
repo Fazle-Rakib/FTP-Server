@@ -65,8 +65,7 @@ public class ClientController implements Initializable {
         fileIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         fileNameColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
         fileSizeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSize"));
-        this.observableFileList = client.getObservableFileList();
-        fileTableView.setItems(this.observableFileList);
+        this.refreshList();
     }
 
     @FXML
@@ -87,8 +86,9 @@ public class ClientController implements Initializable {
     void deleteFileMenuButtonAction(ActionEvent event) {
         FileDetails fileDetails = fileTableView.getSelectionModel().getSelectedItem();
         client.deleteFile(fileDetails.getId());
-        this.observableFileList.removeAll(this.observableFileList);
-        FXCollections.copy(this.observableFileList, client.getObservableFileList());
+        this.refreshList();
+//        this.observableFileList.removeAll(this.observableFileList);
+//        FXCollections.copy(this.observableFileList, client.getObservableFileList());
 //        this.observableFileList = client.getObservableFileList();
 //        fileTableView.setItems(client.getObservableFileList());
 //        fileTableView.refresh();
@@ -120,6 +120,7 @@ public class ClientController implements Initializable {
             System.out.println(fileToUpload.getAbsolutePath());
             System.out.println(client.getHostIp() +  client.getHostPort());
             client.uploadFile(fileToUpload);
+            this.refreshList();
 
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
@@ -127,6 +128,10 @@ public class ClientController implements Initializable {
     }
 
     public void refreshListButtonAction(ActionEvent event) {
+        this.refreshList();
+    }
+
+    private void refreshList() {
         this.observableFileList = client.getObservableFileList();
         fileTableView.setItems(this.observableFileList);
     }

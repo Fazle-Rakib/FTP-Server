@@ -47,8 +47,7 @@ public class ServerController implements Initializable {
         fileIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         fileNameColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
         fileSizeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSize"));
-        this.observableFileList = server.getObservableFileList();
-        fileTableView.setItems(this.observableFileList);
+        this.refreshList();
     }
 
     public void refreshListButtonAction(ActionEvent event) {
@@ -57,6 +56,14 @@ public class ServerController implements Initializable {
     }
 
     public void deleteFileMenuButtonAction(ActionEvent event) {
+//        FileDetails fileDetails = fileTableView.getSelectionModel().getSelectedItem();
+//        server.deleteFile(fileDetails.getId());
+//        this.refreshList();
+    }
+
+    private void refreshList() {
+        this.observableFileList = server.getObservableFileList();
+        fileTableView.setItems(this.observableFileList);
     }
 
 }

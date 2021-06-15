@@ -283,7 +283,9 @@ public class Server extends Thread {
                         }
 
                     }
-                    outputStream.close();
+                    sendFileList(outputStreamObj);
+
+//                    outputStream.close();
                 }
                 else if(whichOne == 3)//File Rename
                 {
@@ -342,8 +344,9 @@ public class Server extends Thread {
                         outputStream.close();
                     }
                 }
-                else
+                else //FileList Fetch
                 {
+                    System.out.println("here in delete SERVER");
                     sendFileList(outputStreamObj);
                 }
 
@@ -357,4 +360,17 @@ public class Server extends Thread {
     }
 
 
+    public void deleteFile(int id) {
+        File file = null;
+        for(FileDetails each:fileList) {
+            if (each.getId() == id) {
+                file = new File(fileDir + each.getFileName());
+                if (file.delete()) {
+                    boolean isDelete = deleteArrayListItem(id);
+                    System.out.println("Successfully deleted :" + each.getFileName());
+                }
+            }
+        }
+       return;
+    }
 }
