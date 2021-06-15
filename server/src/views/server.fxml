@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ServerController">
+    <top>
+        <AnchorPane prefHeight="2.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+            <children>
+                <TitledPane prefHeight="17.0" prefWidth="600.0" text="Server Files" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </TitledPane>
+            </children>
+        </AnchorPane>
+    </top>
+    <bottom>
+        <AnchorPane prefHeight="405.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+            <children>
+                <TableView fx:id="fileTableView" layoutX="261.0" layoutY="25.0" prefHeight="364.0" prefWidth="588.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                        <TableColumn fx:id="fileIdColumn" minWidth="30.0" prefWidth="200.0" text="File Id" />
+                        <TableColumn fx:id="fileNameColumn" minWidth="0.0" prefWidth="200.0" text="File Name" />
+                        <TableColumn fx:id="fileSizeColumn" prefWidth="200.0" text="File Size" />
+                    </columns>
+                    <contextMenu>
+                        <ContextMenu>
+                            <items>
+                                <MenuItem fx:id="deleteFileMenuButton" mnemonicParsing="false" onAction="#deleteFileMenuButtonAction" text="Delete" />
+                            </items>
+                        </ContextMenu>
+                    </contextMenu>
+                </TableView>
+            </children>
+        </AnchorPane>
+    </bottom>
+</BorderPane>

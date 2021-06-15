@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ClientController">
+   <top>
+      <AnchorPane prefHeight="140.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="chooseFileButton" layoutX="35.0" layoutY="20.0" mnemonicParsing="false" onAction="#chooseFileButtonAction" text="Choose File" AnchorPane.leftAnchor="23.0" />
+            <Button fx:id="uploadFileButton" disable="true" layoutX="25.0" layoutY="101.0" mnemonicParsing="false" onAction="#uploadFileButtonAction" prefHeight="25.0" prefWidth="72.0" text="Upload" AnchorPane.bottomAnchor="14.0" />
+            <TextField fx:id="chosenFileDirectoryTextField" layoutX="136.0" layoutY="20.0" prefHeight="25.0" prefWidth="441.0" promptText="Please Choose a File to Upload" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="23.0" />
+            <Button fx:id="uploadFileButton1" disable="true" layoutX="116.0" layoutY="101.0" mnemonicParsing="false" onAction="#uploadFileButtonAction" prefHeight="25.0" prefWidth="72.0" text="Preview" AnchorPane.bottomAnchor="14.0" />
+         </children>
+      </AnchorPane>
+   </top>
+   <bottom>
+      <AnchorPane prefHeight="285.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <TitledPane prefHeight="17.0" prefWidth="600.0" text="Server Files" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TitledPane>
+            <TableView fx:id="fileTableView" layoutX="261.0" layoutY="25.0" prefHeight="175.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+              <columns>
+                <TableColumn fx:id="fileIdColumn" prefWidth="188.0" text="File Id" />
+                <TableColumn fx:id="fileNameColumn" minWidth="0.0" prefWidth="204.0" text="File Name" />
+                  <TableColumn fx:id="fileSizeColumn" prefWidth="207.0" text="File Size" />
+              </columns>
+               <contextMenu>
+                  <ContextMenu>
+                    <items>
+                        <MenuItem fx:id="downloadFileMenuButton" mnemonicParsing="false" onAction="#downloadFileMenuAction" text="Download" />
+                        <MenuItem fx:id="renameFileMenuButton" mnemonicParsing="false" onAction="#renameFileMenuAction" text="Edit File Name" />
+                      <MenuItem fx:id="deleteFileMenuButton" mnemonicParsing="false" onAction="#deleteFileMenuButtonAction" text="Delete" />
+                    </items>
+                  </ContextMenu>
+               </contextMenu>
+            </TableView>
+         </children>
+      </AnchorPane>
+   </bottom>
+</BorderPane>
