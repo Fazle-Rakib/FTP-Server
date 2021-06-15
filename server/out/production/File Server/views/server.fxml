@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
@@ -11,20 +12,21 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ServerController">
     <top>
-        <AnchorPane prefHeight="2.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="95.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <children>
-                <TitledPane prefHeight="17.0" prefWidth="600.0" text="Server Files" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <TitledPane layoutY="74.0" prefHeight="17.0" prefWidth="600.0" text="Server Files" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="74.0">
                     <font>
                         <Font size="14.0" />
                     </font>
                 </TitledPane>
+            <Button fx:id="refreshListButton" layoutX="14.0" layoutY="28.0" mnemonicParsing="false" onAction="#refreshListButtonAction" prefHeight="22.0" prefWidth="117.0" text="Refresh List" />
             </children>
         </AnchorPane>
     </top>
     <bottom>
-        <AnchorPane prefHeight="405.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="300.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <children>
-                <TableView fx:id="fileTableView" layoutX="261.0" layoutY="25.0" prefHeight="364.0" prefWidth="588.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <TableView fx:id="fileTableView" layoutX="261.0" layoutY="-18.0" prefHeight="295.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
                         <TableColumn fx:id="fileIdColumn" minWidth="30.0" prefWidth="200.0" text="File Id" />
                         <TableColumn fx:id="fileNameColumn" minWidth="0.0" prefWidth="200.0" text="File Name" />

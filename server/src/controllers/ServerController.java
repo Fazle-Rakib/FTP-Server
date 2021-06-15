@@ -19,6 +19,9 @@ import java.util.ResourceBundle;
 public class ServerController implements Initializable {
 
     @FXML
+    private Button refreshListButton;
+
+    @FXML
     private TableView<FileDetails> fileTableView;
 
     @FXML
@@ -48,6 +51,12 @@ public class ServerController implements Initializable {
         fileTableView.setItems(this.observableFileList);
     }
 
+    public void refreshListButtonAction(ActionEvent event) {
+        this.observableFileList = server.getObservableFileList();
+        fileTableView.setItems(this.observableFileList);
+    }
+
     public void deleteFileMenuButtonAction(ActionEvent event) {
     }
+
 }

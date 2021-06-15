@@ -119,6 +119,17 @@ public class Server extends Thread {
 
     }
 
+    public void sendFileList(OutputStream outputStreamObj){
+        try {
+            //Sending all files details to client
+            ObjectOutputStream objOutputStream = new ObjectOutputStream(outputStreamObj);
+            objOutputStream.writeObject(fileList);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
     @Override
     public void run(){
 //        Socket socket = null;
@@ -126,15 +137,16 @@ public class Server extends Thread {
         try{
             socket = serverSocket.accept();
             System.out.println("You can create a socket link now. Server is listing...");
+            System.out.println("Client Address:port =>" + socket.getInetAddress() + ":" + socket.getPort());
+
+            OutputStream outputStreamObj = socket.getOutputStream();
+            InputStream inputStreamObj = socket.getInputStream();
+
+            //Send File List
+            sendFileList(outputStreamObj);
             do{
-                System.out.println("Client Address:port =>" + socket.getInetAddress() + ":" + socket.getPort());
 
-                OutputStream outputStreamObj = socket.getOutputStream();
-                InputStream inputStreamObj = socket.getInputStream();
 
-                //Sending all files details to client
-                ObjectOutputStream objOutputStream = new ObjectOutputStream(outputStreamObj);
-                objOutputStream.writeObject(fileList);
 //                objOutputStream.close();
 
                 DataInputStream inputStream = new DataInputStream(inputStreamObj);
@@ -150,6 +162,11 @@ public class Server extends Thread {
                     String filePath = fileDir+fileName;
                     DataOutputStream fileOut = new DataOutputStream(new FileOutputStream(filePath));
                     len = inputStream.readInt();
+
+                    this.updateArrayList(new FileDetails(fileName,nextFileId++,len,""));
+
+
+
                     byte[] fileByte = new byte[len];
                     System.out.println("The Length : "+len);
                     System.out.println("Staring receiving..."+ fileName);
@@ -176,11 +193,13 @@ public class Server extends Thread {
 //                    {
 //                        fileOut.close();
 //                    }
-                    this.updateArrayList(new FileDetails(fileName,nextFileId++,len,""));
+
                     for(FileDetails element : this.fileList)
                     {
                         System.out.println(element.getFileName()+ " " +element.getId() + " " + element.getFileSize());
                     }
+                    //Send File List
+                    sendFileList(outputStreamObj);
                 }
                 else if(whichOne == 1) // File Download
                 {
@@ -266,7 +285,7 @@ public class Server extends Thread {
                     }
                     outputStream.close();
                 }
-                else //File Rename
+                else if(whichOne == 3)//File Rename
                 {
                     //Getting the file index
                     int fileIndex = inputStream.readInt();
@@ -322,6 +341,10 @@ public class Server extends Thread {
                         System.out.println("Previous file name: "+fileName + " to " + newFileName);
                         outputStream.close();
                     }
+                }
+                else
+                {
+                    sendFileList(outputStreamObj);
                 }
 
             }while(!stop);
