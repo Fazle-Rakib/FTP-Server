@@ -212,8 +212,8 @@ public class Server extends Thread {
                                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStreamObj);
                                 objectOutputStream.writeObject((String)fi.getName());
                                 System.out.println("Successfully Transferred!");
-                                socket.close();
-                                Thread.sleep(1000);
+//                                socket.close();
+//                                Thread.sleep(1000);
 //                                new Server();
                             }
                         }
