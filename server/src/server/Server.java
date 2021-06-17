@@ -89,10 +89,12 @@ public class Server extends Thread {
 
     public Server(){
         System.out.println("here!");
-
+        String projectPath = System.getProperty("user.dir");
+//        System.out.println(projectPath);
         //Creating File path
-        File file = new File("C:\\Users\\souha\\Desktop\\New Project\\server\\src\\AllFiles\\");
+        File file = new File(projectPath+"\\src\\AllFiles\\");
         file.mkdir();
+//        System.out.println(file.getAbsolutePath());
         try{
             serverSocket   = new ServerSocket(9908);
             //Fetching files from directory
@@ -108,7 +110,7 @@ public class Server extends Thread {
             }
 
             //Server Setup
-            setFileDir("C:\\Users\\souha\\Desktop\\New Project\\server\\src\\AllFiles\\");
+            setFileDir(System.getProperty("user.dir")+"\\src\\AllFiles\\");
 //          serverObj.setPort(9908);
             start();
 
@@ -204,6 +206,7 @@ public class Server extends Thread {
                 else if(whichOne == 1) // File Download
                 {
                     int fileIndex = inputStream.readInt();
+//                    socket.shutdownInput();
                     System.out.println("FileIndex :" + fileIndex);
                     String fileName = null;
                     File fi = null ;
@@ -219,24 +222,30 @@ public class Server extends Thread {
                             DataOutputStream dataOutputStream = new DataOutputStream(outputStreamObj);
                             if(fileName == null)
                             {
-                                dataOutputStream.writeInt(0);
+//                                dataOutputStream.writeInt(0);
                             }
                             else
                             {
-                                FileInputStream fileInputStream = new FileInputStream(fi.getAbsolutePath());
+                                DataInputStream fileInputStream = new DataInputStream(new FileInputStream(fi.getAbsolutePath()));
                                 byte[] fileByte = new byte[(int)fi.length()];
-                                fileInputStream.read(fileByte);
+                                System.out.println("file Path:" + fi.getAbsolutePath());
+                                System.out.println("Length of file : "+fileByte.length);
+                                fileInputStream.readFully(fileByte,0,fileByte.length);
+//                                fileInputStream.close();
 
                                 System.out.println(fi.getAbsolutePath());
 
                                // dataOutputStream.writeInt(1);
-                                dataOutputStream.writeInt((int)fi.length());
+//                                dataOutputStream.writeInt((int)fi.length());
                                 dataOutputStream.write(fileByte);
+//                                dataOutputStream.flush();
 
-                                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStreamObj);
-                                objectOutputStream.writeObject((String)fi.getName());
+//                                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStreamObj);
+//                                objectOutputStream.writeObject((String)fi.getName());
                                 System.out.println("Successfully Transferred!");
 //                                socket.close();
+                                sendFileList(outputStreamObj);
+
 //                                Thread.sleep(1000);
 //                                new Server();
                             }
