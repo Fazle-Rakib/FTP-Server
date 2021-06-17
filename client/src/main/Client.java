@@ -69,9 +69,9 @@ public class Client {
 
         //For file downloading
 //        Client fileDown = new Client();
-        File file = new File("C:\\Users\\souha\\Desktop\\New Project\\client\\src\\ClientFlies");
+        File file = new File(System.getProperty("user.dir")+"\\src\\ClientFlies");
         file.mkdir();
-        setFileDir("C:\\Users\\souha\\Desktop\\New Project\\client\\src\\ClientFlies\\");
+        setFileDir(System.getProperty("user.dir")+"\\src\\ClientFlies\\");
 //        fileUp.downloadFile(1);
 
         //For file deletion
@@ -192,11 +192,11 @@ public class Client {
 
     }
 
-    public void downloadFile(int index) {
+    public void downloadFile(FileDetails fileDetails) {
 //        Socket sc = null;
-        DataOutputStream dataOutputStream =new DataOutputStream(this.outputStreamObj);
         DataOutputStream fileOut = null;
         try {
+            DataOutputStream dataOutputStream =new DataOutputStream(this.clientSocket.getOutputStream());
 //            sc = new Socket(hostIp, hostPort);
             System.out.println("Successfully connected(client) for file retrieval");
 
@@ -204,11 +204,13 @@ public class Client {
             dataOutputStream.writeInt(1);
 //            dataOutputStream.flush();
             //Sending Index of the file
-            dataOutputStream.writeInt(index);
+            dataOutputStream.writeInt(fileDetails.getId());
+//            dataOutputStream.flush();
+//            this.clientSocket.shutdownOutput();
 
 
-            DataInputStream dataInputStream = new DataInputStream(this.inputStreamObj);
-            int hasFile = 5;
+            DataInputStream dataInputStream = new DataInputStream(this.clientSocket.getInputStream());
+            int hasFile = 1;
             // hasFile = dataInputStream.readInt();
             System.out.println("Does have file? : " + hasFile);
             if (hasFile == 0) {
@@ -218,29 +220,35 @@ public class Client {
 //                int bufferSize = 8192;
 //                byte[] buf = new byte[bufferSize];
                 long passedlen = 0;
-                int len = 0;
+                long len = 0;
 
 
-                len = dataInputStream.readInt();
+//                len = dataInputStream.readInt();
+                len = fileDetails.getFileSize();
                 System.out.println("The Length : " + len);
                 System.out.println("Staring receiving...");
 
-                byte[] fileByte = new byte[(int)len];
-                dataInputStream.readFully(fileByte,0,fileByte.length);
+                int lengthInt = (int)len;
+                byte[] fileByte = new byte[lengthInt];
 
 
-                ObjectInputStream objectInputStream = new ObjectInputStream(inputStreamObj);
-                String fileName =(String) objectInputStream.readObject();
+//                ObjectInputStream objectInputStream = new ObjectInputStream(inputStreamObj);
+//                String fileName =(String) objectInputStream.readObject();
+                String fileName =(String) fileDetails.getFileName();
 
 //                String fileName = (String) obj;
                 String fileDir = downFileDir + fileName;
                 System.out.println("Filepath : " + fileDir);
                 System.out.println("Filename receiving : " + fileName);
 
-                File fileToDownload = new File(fileDir);
-                FileOutputStream fileOutputStream = new FileOutputStream(fileToDownload);
-                fileOutputStream.write(fileByte);
-                fileOutputStream.close();
+//                File fileToDownload = new File(fileDir);
+//                FileOutputStream fileOutputStream = new FileOutputStream(fileToDownload);
+                DataOutputStream fileOutNew = new DataOutputStream(new FileOutputStream(fileDir));
+                dataInputStream.readFully(fileByte,0,fileByte.length);
+                fileOutNew.write(fileByte);
+//                fileOutNew.close();
+
+//                fileOutputStream.close();
 //                fileOut = new DataOutputStream(new FileOutputStream(fileDir));
 //                fileOut.write(fileByte);
 //                fileOut.flush();
@@ -258,14 +266,15 @@ public class Client {
 //                    fileOut.write(buf, 0, read);
 //                }
                 System.out.println("Receiving completed");
+                fetchFileListFromServer();
 //                fileOut.close();
             }
 
 //            dataOutputStream.close();
 //            dataInputStream.close();
 //            clientSocket.close();
-            new Client("127.0.0.1",9908);
-            clientSocket.close();
+//            new Client("127.0.0.1",9908);
+//            clientSocket.close();
         } catch (Exception e) {
             System.out.println("An Error has occurred in file retrieval(client)!");
             e.printStackTrace();

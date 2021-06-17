@@ -99,7 +99,7 @@ public class ClientController implements Initializable {
 //        event.getTarget()
         FileDetails fileDetails = fileTableView.getSelectionModel().getSelectedItem();
         System.out.println("FILE ID -->" + fileDetails.getId());
-        client.downloadFile(fileDetails.getId());
+        client.downloadFile(fileDetails);
 //        fileTableView
 //        fileTableView.setItems(client.getObservableFileList());
 //        fileTableView.refresh();
