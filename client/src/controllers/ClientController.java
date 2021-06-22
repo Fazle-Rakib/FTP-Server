@@ -15,6 +15,7 @@ import File.FileDetails;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ClientController implements Initializable {
@@ -84,9 +85,20 @@ public class ClientController implements Initializable {
 
     @FXML
     void deleteFileMenuButtonAction(ActionEvent event) {
-        FileDetails fileDetails = fileTableView.getSelectionModel().getSelectedItem();
-        client.deleteFile(fileDetails.getId());
-        this.refreshList();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Dialog");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to delete?");
+        Optional<ButtonType> action = alert.showAndWait();
+
+        if (action.get() == ButtonType.OK) {
+            FileDetails fileDetails = fileTableView.getSelectionModel().getSelectedItem();
+            client.deleteFile(fileDetails.getId());
+            this.refreshList();
+            chosenFileDirectoryTextField.setText("Delete Successful!");
+        }
+
+
 //        this.observableFileList.removeAll(this.observableFileList);
 //        FXCollections.copy(this.observableFileList, client.getObservableFileList());
 //        this.observableFileList = client.getObservableFileList();
@@ -97,9 +109,18 @@ public class ClientController implements Initializable {
     @FXML
     void downloadFileMenuAction(ActionEvent event) {
 //        event.getTarget()
-        FileDetails fileDetails = fileTableView.getSelectionModel().getSelectedItem();
-        System.out.println("FILE ID -->" + fileDetails.getId());
-        client.downloadFile(fileDetails);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Dialog");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to download?");
+        Optional<ButtonType> action = alert.showAndWait();
+
+        if (action.get() == ButtonType.OK) {
+            FileDetails fileDetails = fileTableView.getSelectionModel().getSelectedItem();
+            System.out.println("FILE ID -->" + fileDetails.getId());
+            client.downloadFile(fileDetails);
+            chosenFileDirectoryTextField.setText("Download Successful!");
+        }
 //        fileTableView
 //        fileTableView.setItems(client.getObservableFileList());
 //        fileTableView.refresh();
@@ -118,9 +139,10 @@ public class ClientController implements Initializable {
         }
         try {
             System.out.println(fileToUpload.getAbsolutePath());
-            System.out.println(client.getHostIp() +  client.getHostPort());
+            System.out.println(client.getHostIp() + client.getHostPort());
             client.uploadFile(fileToUpload);
             this.refreshList();
+            chosenFileDirectoryTextField.setText("Upload Successful!");
 
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
