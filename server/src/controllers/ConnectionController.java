@@ -48,7 +48,6 @@ public class ConnectionController implements Initializable {
 //        stage.close();
 
         try {
-            Server server = new Server();
 //            setupConnection(event);
 
 
@@ -61,6 +60,7 @@ public class ConnectionController implements Initializable {
 
             // Access the controller
             ServerController serverController = loader.getController();
+            Server server = new Server(serverController);
             serverController.initData(server);
 
             Stage serverViewStage = (Stage) ((Node) event.getSource()).getScene().getWindow();

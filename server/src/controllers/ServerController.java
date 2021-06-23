@@ -14,9 +14,13 @@ import server.Server;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ServerController implements Initializable {
+
+    @FXML
+    private MenuItem deleteFileMenuButton;
 
     @FXML
     private Button refreshListButton;
@@ -56,12 +60,20 @@ public class ServerController implements Initializable {
     }
 
     public void deleteFileMenuButtonAction(ActionEvent event) {
-//        FileDetails fileDetails = fileTableView.getSelectionModel().getSelectedItem();
-//        server.deleteFile(fileDetails.getId());
+        FileDetails fileDetails = fileTableView.getSelectionModel().getSelectedItem();
+        server.deleteFile(fileDetails.getId());
 //        this.refreshList();
     }
 
-    private void refreshList() {
+    public void popInfoNotification(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Notification");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        Optional<ButtonType> action = alert.showAndWait();
+    }
+
+    public void refreshList() {
         this.observableFileList = server.getObservableFileList();
         fileTableView.setItems(this.observableFileList);
     }

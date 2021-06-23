@@ -14,7 +14,6 @@ import File.FileDetails;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -58,7 +57,6 @@ public class ClientController implements Initializable {
 
     public void initData(Client client) {
         this.client = client;
-//        this.fileList = client.getFileList();
     }
 
     @Override
@@ -85,46 +83,24 @@ public class ClientController implements Initializable {
 
     @FXML
     void deleteFileMenuButtonAction(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation Dialog");
-        alert.setHeaderText(null);
-        alert.setContentText("Are you sure you want to delete?");
-        Optional<ButtonType> action = alert.showAndWait();
 
-        if (action.get() == ButtonType.OK) {
+        if (checkConfirmation("Are you sure you want to delete?")) {
             FileDetails fileDetails = fileTableView.getSelectionModel().getSelectedItem();
             client.deleteFile(fileDetails.getId());
             this.refreshList();
-            chosenFileDirectoryTextField.setText("Delete Successful!");
+            popInfoNotification("Delete Successful");
         }
-
-
-//        this.observableFileList.removeAll(this.observableFileList);
-//        FXCollections.copy(this.observableFileList, client.getObservableFileList());
-//        this.observableFileList = client.getObservableFileList();
-//        fileTableView.setItems(client.getObservableFileList());
-//        fileTableView.refresh();
     }
 
     @FXML
     void downloadFileMenuAction(ActionEvent event) {
-//        event.getTarget()
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation Dialog");
-        alert.setHeaderText(null);
-        alert.setContentText("Are you sure you want to download?");
-        Optional<ButtonType> action = alert.showAndWait();
 
-        if (action.get() == ButtonType.OK) {
+        if (checkConfirmation("Are you sure you want to download?")) {
             FileDetails fileDetails = fileTableView.getSelectionModel().getSelectedItem();
             System.out.println("FILE ID -->" + fileDetails.getId());
             client.downloadFile(fileDetails);
-            chosenFileDirectoryTextField.setText("Download Successful!");
+            popInfoNotification("Download Successful");
         }
-//        fileTableView
-//        fileTableView.setItems(client.getObservableFileList());
-//        fileTableView.refresh();
-//        System.out.println(fileDetails.getFileName() + "    " + fileDetails.getId());
     }
 
     @FXML
@@ -138,23 +114,48 @@ public class ClientController implements Initializable {
             return;
         }
         try {
-            System.out.println(fileToUpload.getAbsolutePath());
-            System.out.println(client.getHostIp() + client.getHostPort());
+//            System.out.println(fileToUpload.getAbsolutePath());
+//            System.out.println(client.getHostIp() + client.getHostPort());
+            chosenFileDirectoryTextField.setText("File Upload On Progress...");
             client.uploadFile(fileToUpload);
             this.refreshList();
-            chosenFileDirectoryTextField.setText("Upload Successful!");
+            popInfoNotification("Upload Successful");
+
 
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }
     }
 
+    private boolean checkConfirmation(String message) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Message");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        Optional<ButtonType> action = alert.showAndWait();
+
+        return action.get() == ButtonType.OK;
+    }
+
+    private void popInfoNotification(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Notification");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        Optional<ButtonType> action = alert.showAndWait();
+    }
+
     public void refreshListButtonAction(ActionEvent event) {
+
+        client.getFileListFromServer();
         this.refreshList();
     }
 
     private void refreshList() {
         this.observableFileList = client.getObservableFileList();
         fileTableView.setItems(this.observableFileList);
+        chosenFileDirectoryTextField.setText("Please choose a file to upload!");
+        fileToUpload = null;
+        uploadFileButton.setDisable(true);
     }
 }

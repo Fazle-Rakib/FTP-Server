@@ -363,6 +363,19 @@ public class Client {
 
     }
 
+    public void getFileListFromServer(){
+        try{
+            DataOutputStream dataOutputStream =new DataOutputStream(this.clientSocket.getOutputStream());
+            dataOutputStream.writeInt(4);
+            fetchFileListFromServer();
+        }catch(Exception e)
+        {
+            System.out.println("Error from Get file List server");
+            e.printStackTrace();
+        }
+
+    }
+
     public void closingSocket(){
     }
 }

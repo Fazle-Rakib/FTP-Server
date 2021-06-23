@@ -1,6 +1,7 @@
 package server;
 
 import File.FileDetails;
+import controllers.ServerController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -87,7 +88,11 @@ public class Server extends Thread {
         this.stop = stop;
     }
 
-    public Server(){
+    private ServerController serverController;
+
+    public Server(ServerController serverController){
+        this.serverController = serverController;
+
         System.out.println("here!");
         String projectPath = System.getProperty("user.dir");
 //        System.out.println(projectPath);
@@ -111,6 +116,7 @@ public class Server extends Thread {
 
             //Server Setup
             setFileDir(System.getProperty("user.dir")+"\\src\\AllFiles\\");
+            serverController.refreshList();
 //          serverObj.setPort(9908);
             start();
 
@@ -140,6 +146,7 @@ public class Server extends Thread {
             socket = serverSocket.accept();
             System.out.println("You can create a socket link now. Server is listing...");
             System.out.println("Client Address:port =>" + socket.getInetAddress() + ":" + socket.getPort());
+//            serverController.popInfoNotification("Client Address:port =>" + socket.getInetAddress() + ":" + socket.getPort());
 
             OutputStream outputStreamObj = socket.getOutputStream();
             InputStream inputStreamObj = socket.getInputStream();
@@ -202,6 +209,7 @@ public class Server extends Thread {
                     }
                     //Send File List
                     sendFileList(outputStreamObj);
+//                    serverController.refreshList();
                 }
                 else if(whichOne == 1) // File Download
                 {
@@ -251,7 +259,7 @@ public class Server extends Thread {
                             }
                         }
                     }
-
+                    serverController.refreshList();
                 }
                 else if(whichOne == 2) // File Delete
                 {
@@ -293,7 +301,7 @@ public class Server extends Thread {
 
                     }
                     sendFileList(outputStreamObj);
-
+//                    serverController.refreshList();
 //                    outputStream.close();
                 }
                 else if(whichOne == 3)//File Rename
@@ -352,15 +360,16 @@ public class Server extends Thread {
                         System.out.println("Previous file name: "+fileName + " to " + newFileName);
                         outputStream.close();
                     }
+//                    serverController.refreshList();
                 }
                 else //FileList Fetch
                 {
                     System.out.println("here in delete SERVER");
                     sendFileList(outputStreamObj);
+//                    serverController.refreshList();
                 }
-
+                serverController.refreshList();
             }while(!stop);
-
         }catch(Exception e){
             System.out.println("An error has occurred!");
             e.printStackTrace();
